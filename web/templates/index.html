@@ -1,0 +1,271 @@
+<html lang="zh-cn">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1.0,user-scalable=no">
+    <title>电商平台价格监控</title>
+    <link rel="icon" href="favicon.ico">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript" src="js/popper.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="js/echarts.min.js"></script>
+</head>
+<body>
+
+<div class="container">
+    <div class="page-header">
+        <h1>电商平台价格监控</h1>
+        <p>学的不仅是技术，更是梦想！！！</p>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <b>设置</b>
+            <form class="form-inline">
+                <label for="phone">手机号码:</label>
+                <input type="text" class="form-control" id="phone" value="15521106350" disabled>
+                <label for="rate">刷新频率:</label>
+                <input type="text" class="form-control" id="rate" value="60" disabled>
+                <button type="button" class="btn btn-success" onclick="setup_confirm()">确定</button>
+                <button type="button" class="btn btn-danger" onclick="setup_cancel()">重置</button>
+            </form>
+
+            <b>监控</b>
+            <form class="form-inline">
+                <label for="id">商品编号:</label>
+                <input type="text" class="form-control" id="id" placeholder="输入商品编号">
+                <label for="want">期望价格:</label>
+                <input type="text" class="form-control" id="want" placeholder="输入期望价格">
+                <button type="button" class="btn btn-success" onclick="add()">添加</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="alert alert-success">
+        <a href="#" class="close" data-dismiss="alert">&times;</a>
+        <strong>提示！</strong>白色为启动状态，黄色为暂停状态，红色为可抢状态~~~
+    </div>
+
+    <table class="table">
+        <thead>
+        <tr>
+            <th>序号</th>
+            <th>商品编号</th>
+            <th>商品名称</th>
+            <th>期望价格</th>
+            <th>目前价格</th>
+            <th>记录时间</th>
+            <th>操作</th>
+        </tr>
+        </thead>
+        <tbody id="content">
+        <tr class="table-warning" hidden>
+            <td>0</td>
+            <td>4311178</td>
+            <td>
+                <a href="https://item.jd.com/4311178.html">
+                    金士顿(Kingston) 240GB SSD固态硬盘.....
+                </a>
+            </td>
+            <td>￥209.0</td>
+            <td>￥229.0</td>
+            <td>2019-11-11<br>00:00:00</td>
+            <td>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">
+                        启动
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item" href="#">启动</a>
+                        <a class="dropdown-item" href="#">暂停</a>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-info" onclick="show_history(4311178)">历史</button>
+                <button type="button" class="btn btn-danger" onclick="remove(4311178)">删除</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div id="main" style="width: 600px;height:400px;"></div>
+</div>
+
+<script type="text/javascript">
+    $.ajax({
+        url: 'get',
+        type: 'GET',
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            $.each(data, function (index, item) {
+                let html = '';
+                if (item.price < 1000) {
+                    html += '<tr>';
+                } else if (item.price < 5000) {
+                    html += '<tr class="table-warning">';
+                } else {
+                    html += '<tr class="table-danger">';
+                }
+                html += '<td>' + index + '</td>';
+                html += '<td>' + item.id + '</td>';
+                html += '<td>';
+                html += '<a href="https://item.jd.com/' + item.id + '.html">';
+                html += item.name.substring(0, 30) + '......';
+                html += '</a>';
+                html += '</td>';
+                html += '<td>￥' + item.want + '</td>';
+                html += '<td>￥' + item.price + '</td>';
+                html += '<td>' + item.date.substring(0, 10) + '<br>' + item.date.substring(11, 19) + '</td>';
+                html += '<td>';
+                html += '<div class="btn-group">';
+                html += '<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">';
+                html += '启动';
+                html += '</button>';
+                html += '<div class="dropdown-menu">';
+                html += '<a class="dropdown-item" href="#">启动</a>';
+                html += '<a class="dropdown-item" href="#">暂停</a>';
+                html += '</div>';
+                html += '</div>';
+                html += '<button type="button" class="btn btn-info" onclick="show_history(' + item.id + ')">历史</button>';
+                html += '<button type="button" class="btn btn-danger" onclick="remove(' + item.id + ')">删除</button>';
+                html += '</td>';
+                html += '</tr>';
+                $('#content').append(html);
+            })
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert('服务器出错：' + XMLHttpRequest.status);
+        }
+    });
+
+    $.ajax({
+        url: 'get_setup',
+        type: 'GET',
+        data: {},
+        dataType: 'json',
+        success: function (data) {
+            $('#phone').val(data.phone);
+            $('#rate').val(data.rate);
+        },
+        error: function (XMLHttpRequest, textStatus, errorThrown) {
+            alert('服务器出错：' + XMLHttpRequest.status);
+        }
+    });
+
+    function show_history(id) {
+        var myChart = echarts.init(document.getElementById('main'));
+        alert(id);
+        var option = {
+            title: {
+                text: '历史价格'
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+            },
+            yAxis: {
+                type: 'value'
+            },
+            series: [{
+                data: [820, 932, 901, 934, 1290, 1330, 1320],
+                type: 'line'
+            }]
+        };
+
+        myChart.setOption(option);
+    }
+
+    function setup_confirm() {
+        let phone = $('#phone').val();
+        let rate = $('#rate').val();
+        if (phone == '' || rate == '') {
+            alert('请输入手机号码和刷新频率！');
+            return;
+        }
+
+        $.ajax({
+            url: 'setup',
+            type: 'POST',
+            data: {'phone': phone, 'rate': rate},
+            // dataType: 'json',
+            success: function (data) {
+                if (data === 'yes') {
+                    alert('成功');
+                    window.location.reload();
+                } else {
+                    alert('失败');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+
+        $('#phone').attr('disabled', 'disabled');
+        $('#rate').attr('disabled', 'disabled');
+    }
+
+    function setup_cancel() {
+        $('#phone').removeAttr('disabled');
+        $('#rate').removeAttr('disabled');
+    }
+
+    function remove(id) {
+        $.ajax({
+            url: 'remove',
+            type: 'POST',
+            data: {'id': id},
+            // dataType: 'json',
+            success: function (data) {
+                if (data === 'yes') {
+                    alert('成功');
+                    window.location.reload();
+                } else {
+                    alert('失败');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+    }
+
+    function add() {
+        let id = $('#id').val();
+        let want = $('#want').val();
+        if (id == '' || want == '') {
+            alert('请输入商品编号和期望价格！');
+            return;
+        }
+
+        $.ajax({
+            url: 'add',
+            type: 'POST',
+            data: {'id': id, 'want': want},
+            // dataType: 'json',
+            success: function (data) {
+                if (data === 'yes') {
+                    alert('成功');
+                    window.location.reload();
+                } else {
+                    alert('失败');
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+
+        $('#id').val('');
+        $('#want').val('');
+    }
+</script>
+
+</body>
+</html>
