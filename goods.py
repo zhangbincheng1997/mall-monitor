@@ -5,12 +5,16 @@ class Goods():
         self.name = name
         self.price = price
         self.date = date
-        self.history_price = []
-        self.history_date = []
+        self.status = '1'
+        self.history_price = [price]
+        self.history_date = [date]
 
     def add(self, price, date):
         self.history_price.append(price)
         self.history_date.append(date)
+
+    def change(self, status):
+        self.status = status
 
     def out(self):
         print(self.__dict__)

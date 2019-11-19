@@ -27,7 +27,8 @@ class Monitor():
             date = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
 
             if id not in self.goodsDict.keys():
-                self.goodsDict[id] = Goods(id, name, price, date)
+                want = price
+                self.goodsDict[id] = Goods(id, want, name, price, date)
             else:
                 self.goodsDict[id].add(price, date)
 

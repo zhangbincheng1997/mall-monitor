@@ -33,20 +33,20 @@ import time
 import json
 
 goodsDict = {}
-goodsDict['4311178'] = Goods('4311178', 219.0, '金士顿(Kingston) 240GB SSD固态硬盘 SATA3.0接口 A400系列', 229.0,
+goodsDict['4311178'] = Goods('4311178', 219.00, '金士顿(Kingston) 240GB SSD固态硬盘 SATA3.0接口 A400系列', 229.00,
                              time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['4311182'] = Goods('4311182', 339.0, '金士顿(Kingston) 480GB SSD固态硬盘 SATA3.0接口 A400系列', 349.0,
+goodsDict['4311182'] = Goods('4311182', 339.00, '金士顿(Kingston) 480GB SSD固态硬盘 SATA3.0接口 A400系列', 349.00,
                              time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['100002795959'] = Goods('100002795959', 4900.0,
+goodsDict['100002795959'] = Goods('100002795959', 4900.00,
                                   '华为 HUAWEI P30 Pro 超感光徕卡四摄10倍混合变焦麒麟980芯片屏内指纹 8GB+128GB极光色全网通版双4G手机',
-                                  4988.0, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['100004751037'] = Goods('100004751037', 5600.0,
+                                  4988.00, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+goodsDict['100004751037'] = Goods('100004751037', 5600.00,
                                   '华为(HUAWEI)MateBook 14 第三方Linux版 全面屏轻薄性能笔记本电脑(i5-8265U 8+512GB 2k 独显)灰',
-                                  5699.0, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['8797490'] = Goods('8797490', 8998.0, '微星（MSI）万图师 GeForce RTX 2080 Ti VENTUS GP 11G GDDR6 时尚精巧电脑电竞游戏小卡显卡',
-                             8999.0, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+                                  5699.00, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+goodsDict['8797490'] = Goods('8797490', 8998.00, '微星（MSI）万图师 GeForce RTX 2080 Ti VENTUS GP 11G GDDR6 时尚精巧电脑电竞游戏小卡显卡',
+                             8999.00, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
 
-phone = '15521106350'  # 手机号码
+email = '15521106350'  # 电子邮箱
 rate = 60  # 刷新频率
 
 
@@ -83,16 +83,30 @@ def remove():
             return 'no'
 
 
+@app.route('/change', methods=['POST'])
+def change():
+    data = request.form.to_dict()
+    if data != '':
+        id = data['id']
+        status = data['status']
+        if id in goodsDict.keys():
+            print(status)
+            goodsDict[id].change(status)
+            return 'yes'
+        else:
+            return 'no'
+
+
 @app.route('/setup', methods=['POST'])
 def setup():
     data = request.form.to_dict()
     if data != '':
-        _phone = data['phone']
+        _email = data['email']
         _rate = int(data['rate'])
-        if _phone is not None and _rate is not None:
-            global phone
+        if _email is not None and _rate is not None:
+            global email
             global rate
-            phone = _phone
+            email = _email
             rate = _rate
             return 'yes'
         else:
