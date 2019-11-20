@@ -55,7 +55,7 @@
             <th>商品编号</th>
             <th>商品名称</th>
             <th>期望价格</th>
-            <th>目前价格</th>
+            <th>当前价格</th>
             <th>记录时间</th>
             <th>操作</th>
         </tr>
@@ -104,12 +104,12 @@
             info = data;
             $.each(data, function (index, item) {
                 let html = '';
-                if (item.price < 1000) {
-                    html += '<tr>';
-                } else if (item.price < 5000) {
-                    html += '<tr class="table-warning">';
-                } else {
+                if (item.want >= item.price) {
                     html += '<tr class="table-danger">';
+                } else if (item.status === '1') {
+                    html += '<tr>';
+                } else if (item.status === '0') {
+                    html += '<tr class="table-warning">';
                 }
                 html += '<td>' + index + '</td>';
                 html += '<td>' + item.id + '</td>';
@@ -150,7 +150,7 @@
     });
 
     $.ajax({
-        url: 'get_setup',
+        url: 'setting',
         type: 'GET',
         data: {},
         dataType: 'json',
@@ -193,15 +193,17 @@
     }
 
     function setup_confirm() {
+        if ($('#email').attr('disabled')) return;
+
         let email = $('#email').val();
         let rate = $('#rate').val();
-        if (phone == '' || rate == '') {
+        if (email == '' || rate == '') {
             alert('请输入电子邮箱和刷新频率！');
             return;
         }
 
         $.ajax({
-            url: 'setup',
+            url: 'setting',
             type: 'POST',
             data: {'email': email, 'rate': rate},
             // dataType: 'json',
@@ -218,8 +220,8 @@
             }
         });
 
-        $('#email').attr('disabled', 'disabled');
-        $('#rate').attr('disabled', 'disabled');
+        $('#email').attr('disabled', true);
+        $('#rate').attr('disabled', true);
     }
 
     function setup_cancel() {

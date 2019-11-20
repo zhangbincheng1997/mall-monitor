@@ -24,34 +24,17 @@
 #
 # logger = init_log()
 
-from flask import Flask, render_template, request, jsonify
-
-app = Flask(__name__, static_url_path='')
-
-from goods import Goods
-import time
+from flask import Flask, render_template, request
+from monitor import Monitor
 import json
 
-goodsDict = {}
-goodsDict['4311178'] = Goods('4311178', 219.00, '金士顿(Kingston) 240GB SSD固态硬盘 SATA3.0接口 A400系列', 229.00,
-                             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['4311182'] = Goods('4311182', 339.00, '金士顿(Kingston) 480GB SSD固态硬盘 SATA3.0接口 A400系列', 349.00,
-                             time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['100002795959'] = Goods('100002795959', 4900.00,
-                                  '华为 HUAWEI P30 Pro 超感光徕卡四摄10倍混合变焦麒麟980芯片屏内指纹 8GB+128GB极光色全网通版双4G手机',
-                                  4988.00, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['100004751037'] = Goods('100004751037', 5600.00,
-                                  '华为(HUAWEI)MateBook 14 第三方Linux版 全面屏轻薄性能笔记本电脑(i5-8265U 8+512GB 2k 独显)灰',
-                                  5699.00, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-goodsDict['8797490'] = Goods('8797490', 8998.00, '微星（MSI）万图师 GeForce RTX 2080 Ti VENTUS GP 11G GDDR6 时尚精巧电脑电竞游戏小卡显卡',
-                             8999.00, time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
-
-email = '15521106350'  # 电子邮箱
-rate = 60  # 刷新频率
+app = Flask(__name__, static_url_path='')
+monitor = Monitor()
+monitor.run()
 
 
 @app.route('/', methods=['GET'])
-def view():
+def index():
     return render_template('index.html')
 
 
@@ -60,12 +43,9 @@ def add():
     data = request.form.to_dict()
     if data != '':
         id = data['id']
-        print(id, goodsDict.keys())
-        if id not in goodsDict.keys():
-            want = float(data['want'])
-            print(want)
-            goodsDict[id] = Goods(id, want, '测试' + id, want + 10,
-                                  time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()))
+        want = float(data['want'])
+        res = monitor.add(id, want)
+        if res:
             return 'yes'
         else:
             return 'no'
@@ -76,8 +56,8 @@ def remove():
     data = request.form.to_dict()
     if data != '':
         id = data['id']
-        if id in goodsDict.keys():
-            goodsDict.pop(id)
+        res = monitor.remove(id)
+        if res:
             return 'yes'
         else:
             return 'no'
@@ -89,42 +69,38 @@ def change():
     if data != '':
         id = data['id']
         status = data['status']
-        if id in goodsDict.keys():
-            print(status)
-            goodsDict[id].change(status)
+        if id in monitor.goodsDict.keys():
+            monitor.goodsDict[id].change(status)
             return 'yes'
         else:
             return 'no'
 
 
-@app.route('/setup', methods=['POST'])
-def setup():
+@app.route('/setting', methods=['GET'])
+def setting_get():
+    return {'email': monitor.email, 'rate': monitor.rate}
+
+
+@app.route('/setting', methods=['POST'])
+def setting_set():
     data = request.form.to_dict()
     if data != '':
-        _email = data['email']
-        _rate = int(data['rate'])
-        if _email is not None and _rate is not None:
-            global email
-            global rate
-            email = _email
-            rate = _rate
+        email = data['email']
+        rate = int(data['rate'])
+        if email is not None and rate is not None:
+            monitor.setting(email, rate)
             return 'yes'
         else:
             return 'no'
-
-
-@app.route('/get_setup', methods=['GET'])
-def get_setup():
-    return {'phone': phone, 'rate': rate}
 
 
 @app.route('/get', methods=['GET'])
 def get():
     result = []
-    for item in goodsDict.values():
+    for item in monitor.goodsDict.values():
         result.append(item.__dict__)
     return json.dumps(result)
 
 
 if __name__ == '__main__':
-    app.run('0.0.0.0', debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)
