@@ -1,23 +1,12 @@
-class Response():
-    def __init__(self, code, message, data):
-        self._code = code
-        self._message = message
-        self._data = data
+class Response:
+    @staticmethod
+    def status(code, message, data):
+        return {'code': code, 'message': message, 'data': data}
 
-    def success(self, data=''):
-        self._code = 200
-        self._message = '成功'
-        self._data = data
+    @staticmethod
+    def success(message='成功', data=''):
+        return {'code': 200, 'message': message, 'data': data}
 
-    def failure(self, data=''):
-        self._code = 1000
-        self._message = '失败'
-        self._data = data
-
-    @property
-    def data(self):
-        body = self.__dict__
-        body["code"] = body.pop("_code")
-        body["message"] = body.pop("_message")
-        body["data"] = body.pop("_data")
-        return body
+    @staticmethod
+    def failure(message='失败', data=''):
+        return {'code': 1000, 'message': message, 'data': data}

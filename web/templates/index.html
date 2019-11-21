@@ -78,11 +78,11 @@
                         启动
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#" onclick="change(4311178, 1)">启动</a>
-                        <a class="dropdown-item" href="#" onclick="change(4311178, 0)">暂停</a>
+                        <a class="dropdown-item" href="#" onclick="update_status(4311178, 1)">启动</a>
+                        <a class="dropdown-item" href="#" onclick="update_status(4311178, 0)">暂停</a>
                     </div>
                 </div>
-                <button type="button" class="btn btn-info" onclick="show_history([],[])">历史</button>
+                <button type="button" class="btn btn-info" onclick="history(4311178)">历史</button>
                 <button type="button" class="btn btn-danger" onclick="remove(4311178)">删除</button>
             </td>
         </tr>
@@ -100,15 +100,19 @@
         type: 'GET',
         data: {},
         dataType: 'json',
-        success: function (data) {
-            info = data;
-            $.each(data, function (index, item) {
+        success: function (result) {
+            if (result.code !== 200) {
+                alert(result.message);
+                return;
+            }
+            info = result.data;
+            $.each(info, function (index, item) {
                 let html = '';
                 if (item.want >= item.price) {
                     html += '<tr class="table-danger">';
-                } else if (item.status === '1') {
+                } else if (item.status === 1) {
                     html += '<tr>';
-                } else if (item.status === '0') {
+                } else if (item.status === 0) {
                     html += '<tr class="table-warning">';
                 }
                 html += '<td>' + index + '</td>';
@@ -124,24 +128,22 @@
                 html += '<td>';
                 html += '<div class="btn-group">';
                 html += '<button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown">';
-                if (item.status === '1') {
+                if (item.status === 1) {
                     html += '启动';
-                } else if (item.status === '0') {
+                } else if (item.status === 0) {
                     html += '暂停';
                 }
                 html += '</button>';
                 html += '<div class="dropdown-menu">';
-                html += '<a class="dropdown-item" href="#" onclick="change(' + item.id + ', 1)">启动</a>';
-                html += '<a class="dropdown-item" href="#" onclick="change(' + item.id + ', 0)">暂停</a>';
+                html += '<a class="dropdown-item" href="#" onclick="update_status(' + item.id + ', 1)">启动</a>';
+                html += '<a class="dropdown-item" href="#" onclick="update_status(' + item.id + ', 0)">暂停</a>';
                 html += '</div>';
                 html += '</div>';
-                html += '<button type="button" class="btn btn-info" onclick="show_history(' + index + ')">历史</button>';
+                html += '<button type="button" class="btn btn-info" onclick="history(' + item.id + ')">历史</button>';
                 html += '<button type="button" class="btn btn-danger" onclick="remove(' + item.id + ')">删除</button>';
                 html += '</td>';
                 html += '</tr>';
                 $('#content').append(html);
-                item.history_date.push(info[index].date);
-                item.history_price.push(info[index].price);
             })
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -154,19 +156,40 @@
         type: 'GET',
         data: {},
         dataType: 'json',
-        success: function (data) {
-            $('#email').val(data.email);
-            $('#rate').val(data.rate);
+        success: function (result) {
+            if (result.code === 200) {
+                $('#email').val(result.data.email);
+                $('#rate').val(result.data.rate);
+            } else {
+                alert(result.message);
+            }
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert('服务器出错：' + XMLHttpRequest.status);
         }
     });
 
-    function show_history(index) {
+    function history(id) {
+        $.ajax({
+            url: 'history',
+            type: 'GET',
+            data: {'id': id},
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    show_history(result.data.history_price, result.data.history_date);
+                } else {
+                    alert(result.message);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+    }
+
+    function show_history(history_price, history_date) {
         var myChart = echarts.init(document.getElementById('main'));
-        history_date = info[index].history_date;
-        history_price = info[index].history_price;
 
         var option = {
             title: {
@@ -194,7 +217,6 @@
 
     function setup_confirm() {
         if ($('#email').attr('disabled')) return;
-
         let email = $('#email').val();
         let rate = $('#rate').val();
         if (email == '' || rate == '') {
@@ -206,13 +228,13 @@
             url: 'setting',
             type: 'POST',
             data: {'email': email, 'rate': rate},
-            // dataType: 'json',
-            success: function (data) {
-                if (data === 'yes') {
-                    alert('成功');
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
                     window.location.reload();
                 } else {
-                    alert('失败');
+                    alert(result.message);
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -229,18 +251,38 @@
         $('#rate').removeAttr('disabled');
     }
 
-    function change(id, status) {
+    function update_status(id, status) {
         $.ajax({
-            url: 'change',
+            url: 'status/update',
             type: 'POST',
             data: {'id': id, 'status': status},
-            // dataType: 'json',
-            success: function (data) {
-                if (data === 'yes') {
-                    alert('成功');
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
                     window.location.reload();
                 } else {
-                    alert('失败');
+                    alert(result.message);
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+    }
+
+    function update_want(id, want) {
+        $.ajax({
+            url: 'want/update',
+            type: 'POST',
+            data: {'id': id, 'want': want},
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
+                    window.location.reload();
+                } else {
+                    alert(result.message);
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -254,13 +296,13 @@
             url: 'remove',
             type: 'POST',
             data: {'id': id},
-            // dataType: 'json',
-            success: function (data) {
-                if (data === 'yes') {
-                    alert('成功');
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
                     window.location.reload();
                 } else {
-                    alert('失败');
+                    alert(result.message);
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
@@ -281,13 +323,13 @@
             url: 'add',
             type: 'POST',
             data: {'id': id, 'want': want},
-            // dataType: 'json',
-            success: function (data) {
-                if (data === 'yes') {
-                    alert('成功');
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
                     window.location.reload();
                 } else {
-                    alert('失败');
+                    alert(result.message);
                 }
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {

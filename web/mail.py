@@ -4,7 +4,7 @@ from email.header import Header
 import configparser
 
 
-class Mail():
+class Mail:
     def __init__(self, config='config.ini'):
         cfg = configparser.ConfigParser()
         cfg.read(config)
