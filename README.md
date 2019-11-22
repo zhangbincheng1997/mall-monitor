@@ -6,9 +6,39 @@
 ## 技术
 1. 前端：Boostrap+Jquery
 2. 后端：Python+Flask
-3. 爬虫：Selenium+ChromeDriver(https://chromedriver.storage.googleapis.com/index.html)
+3. 爬虫：Selenium+ChromeDriver(下载地址：https://chromedriver.storage.googleapis.com/index.html)
 
 ## 启动
 ```
 python server.py
+```
+
+## 数据库
+Goods-History:一对多
+
+Goods:
+
+| 属性 | 解释 | 类型 | 备注 |
+| :----: | :----: | :----: | :----: |
+| id | 商品编号 | String(20) | primary_key=True |
+| want | 期望价格 | FLOAT | nullable=False |
+| status | 运行状态 | BOOLEAN | nullable=False |
+
+History:
+
+| 属性 | 解释 | 类型 | 备注 |
+| :----: | :----: | :----: | :----: |
+| date | 历史日期 | Integer | primary_key=True |
+| price | 历史价格 | FLOAT | nullable=False |
+| gid | 商品编号 | String(20) | primary_key=True, ForeignKey |
+
+## 邮箱
+修改`config.ini`的参数，可以上网搜索怎么申请qq邮箱smtp密码~
+```
+[mail]
+host     = smtp.qq.com
+port     = 25
+user     = 1656704949@qq.com
+pass     = xxxxxxxxxxxxxxxx
+sender   = 1656704949@qq.com
 ```

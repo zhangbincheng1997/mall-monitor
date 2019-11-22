@@ -1,12 +1,12 @@
 class Goods:
-    def __init__(self, id, want, status=1, note=0, history_price=[], history_date=[]):
+    def __init__(self, id, want, status, history_price, history_date):
         self.id = id  # 商品编号
         self.want = want  # 期望价格
+        self.status = status  # 运行状况
         self.name = '等待中...'  # 商品名称
         self.price = '-'  # 当前价格
-        self.date = 1569859200  # 当前日期 2019-10-01 00:00:00
-        self.status = status  # 运行状况
-        self.note = note  # 通知备注
+        self.date = 1569859200  # 记录日期 2019-10-01 00:00:00
+        self.note = 0  # 通知备注
         self.history_price = history_price  # 历史价格
         self.history_date = history_date  # 历史日期
 
@@ -25,9 +25,9 @@ class Goods:
         self.note = note
 
     def update_history(self, price, date):
+        self.history_price[-1] = price
+        self.history_date[-1] = date
+
+    def add_history(self, price, date):
         self.history_price.append(price)
         self.history_date.append(date)
-
-    def check(self):
-        # 距离上次通知超过一小时 60*60 & 当前价格小于期望价格
-        return (self.date - self.note >= 3600) and (self.price <= self.want)

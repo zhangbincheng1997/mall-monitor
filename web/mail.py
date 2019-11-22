@@ -13,11 +13,10 @@ class Mail:
         self.mail_user = cfg.get('mail', 'user')
         self.mail_pass = cfg.get('mail', 'pass')
         self.sender = cfg.get('mail', 'sender')
-        # receivers = ['1656704949@qq.com', '2575941820@qq.com']
 
-    def send(self, email, name, want, price, high, low, url):
-        text = '商品名称：%s\n期望价格：%.2f\n目前价格：%.2f\n历史最高：%.2f\n历史最低：%.2f\n购买链接：%s' % \
-               (name, want, price, high, low, url)
+    def send(self, email, name, price, want, high, low, url):
+        text = '商品名称：%s\n目前价格：%.2f\n期望价格：%.2f\n历史最高：%.2f\n历史最低：%.2f\n购买链接：%s' % \
+               (name, price, want, high, low, url)
         message = MIMEText(text, 'plain', 'utf-8')
         message['Subject'] = Header('降价通知', 'utf-8')
         message['From'] = Header('东哥', 'utf-8')
@@ -26,7 +25,7 @@ class Mail:
             smtpObj = smtplib.SMTP()
             smtpObj.connect(self.mail_host, self.mail_port)
             smtpObj.login(self.mail_user, self.mail_pass)
-            smtpObj.sendmail(self.sender, [email], message.as_string())
+            smtpObj.sendmail(self.sender, email, message.as_string())
             print('发送成功')
         except smtplib.SMTPException:
             print('发送失败')
@@ -34,5 +33,5 @@ class Mail:
 
 if __name__ == '__main__':
     mail = Mail()
-    mail.send('1656704949@qq.com', '金士顿(Kingston) 240GB SSD固态硬盘 SATA3.0接口 A400系列', \
+    mail.send('1656704949@qq.com', '金士顿(Kingston) 240GB SSD固态硬盘 SATA3.0接口 A400系列',
               219.00, 229.00, 400.00, 200.00, 'https://item.jd.com/4311178.html')
