@@ -6,7 +6,7 @@
 ## 技术
 1. 前端：Boostrap+Jquery
 2. 后端：Python+Flask
-3. 爬虫：requests+beautifulsoup4+PyExecJS
+3. 爬虫：requests+beautifulsoup4+PyExecJS(未来可以加代理池)
 
 ## 启动
 ```
