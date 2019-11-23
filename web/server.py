@@ -91,10 +91,11 @@ def get():
         goods = {}
         goods['id'] = item.id  # 商品编号
         goods['want'] = item.want  # 期望价格
+        goods['status'] = item.status  # 运行状况
+        goods['url'] = item.url  # 购买链接
         goods['name'] = item.name  # 商品名称
         goods['price'] = item.price  # 当前价格
         goods['date'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(item.date))  # 记录日期
-        goods['status'] = item.status  # 运行状况
         result.append(goods)
     return Response.success(data=result)
 
@@ -104,12 +105,9 @@ def history():
     data = request.args.to_dict()
     if data != '':
         id = data['id']
-        if id in monitor.goods_dict.keys():
-            history = {}
-            history['price'] = monitor.goods_dict[id].history_price  # 历史价格
-            history['date'] = [time.strftime('%Y-%m-%d %H:00:00', time.localtime(date))
-                               for date in monitor.goods_dict[id].history_date]  # 历史日期
-            return Response.success(data=history)
+        res = monitor.history(id)
+        if history:
+            return Response.success(data=res)
         else:
             return Response.failure(message='商品编号错误')
 
