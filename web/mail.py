@@ -5,7 +5,7 @@ import configparser
 
 
 class Mail:
-    def __init__(self, config='config.ini'):
+    def __init__(self, config='config.cfg'):
         cfg = configparser.ConfigParser()
         cfg.read(config)
         self.mail_host = cfg.get('mail', 'host')
@@ -34,4 +34,4 @@ class Mail:
 if __name__ == '__main__':
     mail = Mail()
     mail.send('1656704949@qq.com', '金士顿(Kingston) 240GB SSD固态硬盘 SATA3.0接口 A400系列',
-              219.00, 229.00, 400.00, 200.00, 'https://item.jd.com/4311178.html')
+              219.00, 219.00, 400.00, 200.00, 'https://item.jd.com/4311178.html')

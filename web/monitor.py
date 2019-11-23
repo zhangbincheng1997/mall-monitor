@@ -55,6 +55,7 @@ class Monitor:
     def update_want(self, id, want):
         if id in self.goods_dict.keys():
             self.goods_dict[id].update_want(want)
+            self.goods_dict[id].update_note(0)
             self.db.update_want(id, want)
             return True
         else:
@@ -64,6 +65,7 @@ class Monitor:
     def update_status(self, id, status):
         if id in self.goods_dict.keys():
             self.goods_dict[id].update_status(status)
+            self.goods_dict[id].update_note(0)
             self.db.update_status(id, status)
             return True
         else:
@@ -83,7 +85,8 @@ class Monitor:
 
     # 定时任务
     def task(self):
-        for id in self.goods_dict.keys():
+        ids = list(self.goods_dict.keys())
+        for id in ids:
             goods = self.goods_dict[id]
             if goods.status:
                 # 电脑 https://item.jd.com/xxxx.html

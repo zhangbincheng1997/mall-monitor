@@ -6,7 +6,9 @@
 ## 技术
 1. 前端：Boostrap+Jquery
 2. 后端：Python+Flask
-3. 爬虫：Selenium+ChromeDriver(下载地址：https://chromedriver.storage.googleapis.com/index.html)
+3. 爬虫：Selenium+ChromeDriver
+> * https://dl.google.com/linux/direct/google-chrome-stable_current_x86_64.rpm
+> * https://chromedriver.storage.googleapis.com/index.html
 
 ## 启动
 ```
@@ -33,7 +35,7 @@ History:
 | gid | 商品编号 | String(20) | primary_key=True, ForeignKey |
 
 ## 邮箱
-修改`config.ini`的参数，可以上网搜索怎么申请qq邮箱smtp密码~
+修改`config.cfg`的参数，可以上网搜索怎么申请qq邮箱smtp密码~
 ```
 [mail]
 host     = smtp.qq.com
