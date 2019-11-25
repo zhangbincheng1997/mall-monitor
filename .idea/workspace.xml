@@ -2,15 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6f59bbac-3cd4-43bf-974b-05262fef53f2" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/web/MMM_GET_TOKEN.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/web/crawl.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/image.png" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/db.py" beforeDir="false" afterPath="$PROJECT_DIR$/web/db.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/foo.db" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/goods.py" beforeDir="false" afterPath="$PROJECT_DIR$/web/goods.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/web/mail.py" beforeDir="false" afterPath="$PROJECT_DIR$/web/mail.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/image.png" beforeDir="false" afterPath="$PROJECT_DIR$/image.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/config.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/web/config.cfg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/crawl.py" beforeDir="false" afterPath="$PROJECT_DIR$/web/crawl.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/web/foo.db" beforeDir="false" afterPath="$PROJECT_DIR$/web/foo.db" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/web/monitor.py" beforeDir="false" afterPath="$PROJECT_DIR$/web/monitor.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/web/server.py" beforeDir="false" afterPath="$PROJECT_DIR$/web/server.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/web/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/web/templates/index.html" afterDir="false" />
@@ -57,7 +53,7 @@
     <property name="DatabaseDriversLRU" value="sqlite" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/web/static/images" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/web/static/js" />
     <property name="node.js.detected.package.eslint" value="true" />
     <property name="node.js.detected.package.tslint" value="true" />
     <property name="node.js.path.for.package.eslint" value="project" />
@@ -67,14 +63,14 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\code\mall-monitor\web\static\images" />
-      <recent name="D:\code\mall-monitor\web\static\js" />
-      <recent name="D:\code\mall-monitor\web\static\css" />
-      <recent name="D:\code\mall-monitor\web\static" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\code\mall-monitor\web" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\code\mall-monitor\web\static\js" />
+      <recent name="D:\code\mall-monitor\web\static\images" />
+      <recent name="D:\code\mall-monitor\web\static\css" />
+      <recent name="D:\code\mall-monitor\web\static" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -144,6 +140,9 @@
       <workItem from="1574496209146" duration="2834000" />
       <workItem from="1574507437835" duration="11115000" />
       <workItem from="1574534370306" duration="704000" />
+      <workItem from="1574576812939" duration="833000" />
+      <workItem from="1574605733872" duration="2390000" />
+      <workItem from="1574663836487" duration="5659000" />
     </task>
     <servers />
   </component>
@@ -169,7 +168,7 @@
     <SUITE FILE_PATH="coverage/mall_monitor$response.coverage" NAME="response Coverage Results" MODIFIED="1574352628575" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
     <SUITE FILE_PATH="coverage/mall_monitor$db.coverage" NAME="db Coverage Results" MODIFIED="1574524799341" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
     <SUITE FILE_PATH="coverage/mall_monitor$monitor.coverage" NAME="monitor Coverage Results" MODIFIED="1574527572722" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
-    <SUITE FILE_PATH="coverage/mall_monitor$server.coverage" NAME="server Coverage Results" MODIFIED="1574534383329" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
+    <SUITE FILE_PATH="coverage/mall_monitor$server.coverage" NAME="server Coverage Results" MODIFIED="1574669689692" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
     <SUITE FILE_PATH="coverage/mall_monitor$goods.coverage" NAME="goods Coverage Results" MODIFIED="1574347936153" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
     <SUITE FILE_PATH="coverage/mall_monitor$mail.coverage" NAME="mail Coverage Results" MODIFIED="1574457322314" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />
     <SUITE FILE_PATH="coverage/mall_monitor$crawl.coverage" NAME="crawl Coverage Results" MODIFIED="1574533741396" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/web" />

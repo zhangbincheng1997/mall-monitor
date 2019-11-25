@@ -3,17 +3,17 @@ from crawl import Crawl
 from goods import Goods
 from mail import Mail
 import threading
-import time
 
 
 class Monitor:
-    def __init__(self, email='1656704949@qq.com', rate=60):
+    def __init__(self, email='1656704949@qq.com', rate=60, note=60 * 60):
         self.goods_dict = {}
         self.db = DB()
         self.crawl = Crawl()
         self.mail = Mail()
-        self.email = email  # 电子邮箱
+        self.email = [email]  # 电子邮箱
         self.rate = rate  # 刷新频率
+        self.note = note  # 通知频率
 
         # 加载数据
         result = self.db.query()
@@ -82,10 +82,8 @@ class Monitor:
                 goods.update(name, price, date)
 
                 ########## 检查是否符合发送条件 ##########
-                NOTE = 60 * 60  # 一小时
-                # NOTE = 60 * 60 * 24 # 一天
                 # 满足通知间隔时间 & 当前价格小于期望价格
-                if (date - goods.note >= NOTE) and (price <= goods.want):
+                if (date - goods.note >= self.note) and (price <= goods.want):
                     self.mail.send(self.email, name, price, goods.want, goods.url)
                     goods.update_note(date)
         print('----------刷新数据----------')

@@ -11,6 +11,7 @@
     <script type="text/javascript" src="js/popper.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/echarts.min.js"></script>
+    <script type="text/javascript" src="js/echarts.min.js"></script>
 </head>
 <body>
 
@@ -23,13 +24,19 @@
     <div class="card">
         <div class="card-body">
             <b>设置</b>
-            <form class="form-inline">
+            <form class="form-inline" id="emails">
                 <label for="email">电子邮箱:</label>
-                <input type="text" class="form-control" id="email" value="1656704949@qq.com" disabled>
+                <input type="text" class="form-control" id="email" placeholder="输入电子邮箱">
+                <button type="button" class="btn btn-success" onclick="add_email()">添加</button>
+            </form>
+
+            <form class="form-inline">
                 <label for="rate">刷新频率:</label>
                 <input type="text" class="form-control" id="rate" value="60" disabled>
-                <button type="button" class="btn btn-success" onclick="setup_confirm()">确定</button>
-                <button type="button" class="btn btn-danger" onclick="setup_cancel()">重置</button>
+                <label for="note">通知频率:</label>
+                <input type="text" class="form-control" id="note" value="3600" disabled>
+                <button type="button" class="btn btn-success" onclick="update_setting()">确定</button>
+                <button type="button" class="btn btn-danger" onclick="reset()">重置</button>
             </form>
 
             <b>监控</b>
@@ -98,8 +105,6 @@
 </div>
 
 <script type="text/javascript">
-    let info;
-
     $.ajax({
         url: 'get',
         type: 'GET',
@@ -110,8 +115,23 @@
                 alert(result.message);
                 return;
             }
-            info = result.data;
-            $.each(info, function (index, item) {
+
+            // setting
+            $('#rate').val(result.data.rate);
+            $('#note').val(result.data.note);
+
+            // email
+            $.each(result.data.email, function (index, item) {
+                let html = '';
+                html += '<div class="alert alert-success">';
+                html += '<a href="javascript:void(0);" onclick="remove_email(' + '\'' + item + '\'' + ')" class="close" data-dismiss="alert">&times;</a>';
+                html += item;
+                html += '</div>';
+                $('#emails').append(html);
+            });
+
+            // goods
+            $.each(result.data.goods, function (index, item) {
                 let html = '';
                 if (item.want >= item.price) {
                     html += '<tr class="table-danger">';
@@ -149,25 +169,7 @@
                 html += '</td>';
                 html += '</tr>';
                 $('#content').append(html);
-            })
-        },
-        error: function (XMLHttpRequest, textStatus, errorThrown) {
-            alert('服务器出错：' + XMLHttpRequest.status);
-        }
-    });
-
-    $.ajax({
-        url: 'setting',
-        type: 'GET',
-        data: {},
-        dataType: 'json',
-        success: function (result) {
-            if (result.code === 200) {
-                $('#email').val(result.data.email);
-                $('#rate').val(result.data.rate);
-            } else {
-                alert(result.message);
-            }
+            });
         },
         error: function (XMLHttpRequest, textStatus, errorThrown) {
             alert('服务器出错：' + XMLHttpRequest.status);
@@ -202,19 +204,11 @@
         });
     }
 
-    function setup_confirm() {
-        if ($('#email').attr('disabled')) return;
-        let email = $('#email').val();
-        let rate = $('#rate').val();
-        if (email === '' || rate === '') {
-            alert('请输入电子邮箱和刷新频率！');
-            return;
-        }
-
+    function remove(id) {
         $.ajax({
-            url: 'setting',
+            url: 'remove',
             type: 'POST',
-            data: {'email': email, 'rate': rate},
+            data: {'id': id},
             dataType: 'json',
             success: function (result) {
                 if (result.code === 200) {
@@ -230,15 +224,89 @@
         });
     }
 
-    function setup_cancel() {
-        $('#email').removeAttr('disabled');
+    function add_email() {
+        let email = $('#email').val();
+        if (email === '') {
+            alert('请输入电子邮箱！');
+            return;
+        }
+
+        $.ajax({
+            url: 'email/add',
+            type: 'POST',
+            data: {'email': email},
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
+                } else {
+                    alert(result.message);
+                }
+                window.location.reload();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+    }
+
+    function remove_email(email) {
+        $.ajax({
+            url: 'email/remove',
+            type: 'POST',
+            data: {'email': email},
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
+                } else {
+                    alert(result.message);
+                }
+                window.location.reload();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+    }
+
+    function update_setting() {
+        if ($('#email').attr('disabled')) return;
+        let rate = $('#rate').val();
+        let note = $('#note').val();
+        if (rate === '' || note === '') {
+            alert('请输入刷新频率和通知频率！');
+            return;
+        }
+
+        $.ajax({
+            url: 'setting',
+            type: 'POST',
+            data: {'rate': rate, 'note': note,},
+            dataType: 'json',
+            success: function (result) {
+                if (result.code === 200) {
+                    alert(result.message);
+                } else {
+                    alert(result.message);
+                }
+                window.location.reload();
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert('服务器出错：' + XMLHttpRequest.status);
+            }
+        });
+    }
+
+    function reset() {
         $('#rate').removeAttr('disabled');
+        $('#note').removeAttr('disabled');
     }
 
     function update_want(id) {
         let want = prompt("请输入期望价格", "");
         if (want === '' || want == null) {
-            alert('请输入期望价格');
+            alert('请输入期望价格！');
             return;
         }
 
@@ -250,10 +318,10 @@
             success: function (result) {
                 if (result.code === 200) {
                     alert(result.message);
-                    window.location.reload();
                 } else {
                     alert(result.message);
                 }
+                window.location.reload();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert('服务器出错：' + XMLHttpRequest.status);
@@ -270,30 +338,10 @@
             success: function (result) {
                 if (result.code === 200) {
                     alert(result.message);
-                    window.location.reload();
                 } else {
                     alert(result.message);
                 }
-            },
-            error: function (XMLHttpRequest, textStatus, errorThrown) {
-                alert('服务器出错：' + XMLHttpRequest.status);
-            }
-        });
-    }
-
-    function remove(id) {
-        $.ajax({
-            url: 'remove',
-            type: 'POST',
-            data: {'id': id},
-            dataType: 'json',
-            success: function (result) {
-                if (result.code === 200) {
-                    alert(result.message);
-                    window.location.reload();
-                } else {
-                    alert(result.message);
-                }
+                window.location.reload();
             },
             error: function (XMLHttpRequest, textStatus, errorThrown) {
                 alert('服务器出错：' + XMLHttpRequest.status);

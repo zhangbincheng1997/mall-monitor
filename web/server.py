@@ -39,6 +39,44 @@ def remove():
             return Response.failure(message='商品不存在')
 
 
+@app.route('/email/add', methods=['POST'])
+def add_email():
+    data = request.form.to_dict()
+    if data != '':
+        email = data['email']
+        if email not in monitor.email:
+            monitor.email.append(email)
+            return Response.success(message='添加成功')
+        else:
+            return Response.failure(message='邮箱已存在')
+
+
+@app.route('/email/remove', methods=['POST'])
+def remove_email():
+    data = request.form.to_dict()
+    if data != '':
+        email = data['email']
+        if email in monitor.email:
+            monitor.email.remove(email)
+            return Response.success(message='删除成功')
+        else:
+            return Response.failure(message='邮箱不存在')
+
+
+@app.route('/setting/update', methods=['POST'])
+def update_setting():
+    data = request.form.to_dict()
+    if data != '':
+        rate = int(data['rate'])
+        note = int(data['note'])
+        if rate and note:
+            monitor.rate = rate
+            monitor.note = note
+            return Response.success(message='设置成功')
+        else:
+            return Response.failure(message='请输入刷新频率和通知频率')
+
+
 @app.route('/want/update', methods=['POST'])
 def update_want():
     data = request.form.to_dict()
@@ -65,25 +103,6 @@ def update_status():
             return Response.failure(message='商品不存在')
 
 
-@app.route('/setting', methods=['GET'])
-def setting_get():
-    return Response.success(data={'email': monitor.email, 'rate': monitor.rate})
-
-
-@app.route('/setting', methods=['POST'])
-def setting_set():
-    data = request.form.to_dict()
-    if data != '':
-        email = data['email']
-        rate = int(data['rate'])
-        if email and rate:
-            monitor.email = email
-            monitor.rate = rate
-            return Response.success(message='设置成功')
-        else:
-            return Response.failure(message='请输入电子邮箱和刷新频率')
-
-
 @app.route('/get', methods=['GET'])
 def get():
     result = []
@@ -97,7 +116,8 @@ def get():
         goods['price'] = item.price  # 当前价格
         goods['date'] = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(item.date))  # 记录日期
         result.append(goods)
-    return Response.success(data=result)
+    data = {'goods': result, 'rate': monitor.rate, 'note': monitor.note, 'email': monitor.email}
+    return Response.success(data=data)
 
 
 @app.route('/history', methods=['GET'])
