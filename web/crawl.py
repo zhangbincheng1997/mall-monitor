@@ -1,55 +1,70 @@
 from bs4 import BeautifulSoup  # pip install beautifulsoup4
 import execjs  # pip install PyExecJS
 import requests
+import random
 import json
 import time
 
 
 class Crawl:
-    def __init__(self, js_file='MMM_GET_TOKEN.js'):
+    def __init__(self, proxy_file='proxies.txt', js_file='MMM_GET_TOKEN.js'):
+        self.proxy = []
+        with open(proxy_file, 'r') as f:
+            for line in f.readlines():
+                self.proxy.append(line.strip())
         content = ''
         with open(js_file, 'r') as f:
             for line in f.readlines():
                 content += line
         self.js = execjs.compile(content)
         self.API = 'http://tool.manmanbuy.com/history.aspx?DA=1&action=gethistory&url=%s&bjid=&spbh=&cxid=&zkid=&w=951&token=%s'
-        self.headers = {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36'
-        }
 
     def get(self, id):
         return self.get_name(id), self.get_price(id), int(time.time())
 
+    # 获取商品名称
     def get_name(self, id):
         url = 'https://item.jd.com/%s.html' % id
-        try:
-            response = requests.get(url, headers=self.headers)
-            if response.text:
+        proxy = random.choice(self.proxy)
+        retry_count = 5
+        while retry_count > 0:
+            try:
+                # 使用代理
+                response = requests.get(url, proxies={"http": proxy})
                 soup = BeautifulSoup(response.text, 'html.parser')
                 name = soup.find(class_='sku-name')
                 return name.text.strip()
-        except Exception as e:
-            print(e)
-            return
+            except Exception:
+                retry_count -= 1
+        self.proxy.remove(proxy)
+        return None
 
+    # 获取当前价格
     def get_price(self, id):
         url = 'https://p.3.cn/prices/mgets?skuIds=%s' % id
-        try:
-            response = requests.get(url, headers=self.headers)
-            if response.text:
+        proxy = random.choice(self.proxy)
+        retry_count = 5
+        while retry_count > 0:
+            try:
+                # 使用代理
+                response = requests.get(url, proxies={"http": proxy})
                 data = json.loads(response.text)
                 return float(data[0]['p'])
-        except Exception as e:
-            print(e)
-            return
+            except Exception:
+                retry_count -= 1
+        self.proxy.remove(proxy)
+        return None
 
+    # 获取历史价格
     def get_history(self, id):
         url = 'https://item.jd.com/%s.html' % id
         token = self.js.call('d.encrypt', url, '2', 'true')
         api = self.API % (url, token)
-        try:
-            response = requests.get(api, headers=self.headers)
-            if response.text:
+        proxy = random.choice(self.proxy)
+        retry_count = 5
+        while retry_count > 0:
+            try:
+                response = requests.get(api, proxies={"http": proxy})
                 data = json.loads(response.text)
                 history = eval('[' + data['datePrice'] + ']')
                 datePrice = {}
@@ -62,9 +77,10 @@ class Crawl:
                     datePrice['price'].append(h[1])
                     datePrice['msg'].append(h[2])
                 return datePrice
-        except Exception as e:
-            print(e)
-            return
+            except Exception:
+                retry_count -= 1
+        self.proxy.remove(proxy)
+        return None
 
 
 if __name__ == '__main__':

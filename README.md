@@ -6,11 +6,14 @@
 ## 技术
 1. 前端：Boostrap+Jquery
 2. 后端：Python+Flask
-3. 爬虫：requests+beautifulsoup4+PyExecJS(未来可以加代理池)
+3. 爬虫：requests+beautifulsoup4+PyExecJS
+4. 代理池：https://github.com/0xHJK/Proxies 简易实现
 
 ## 启动
 ```
-python server.py
+$ python server.py
+或者
+$ nohup python server.py &
 ```
 
 ## 爬虫
