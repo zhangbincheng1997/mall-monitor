@@ -2,11 +2,13 @@ from db import DB
 from crawl import Crawl
 from goods import Goods
 from mail import Mail
-import threading
+import time
+import sched
 
 
 class Monitor:
     def __init__(self, email='1656704949@qq.com', rate=60, note=60 * 60):
+        self.scheduler = sched.scheduler(time.time, time.sleep)
         self.goods_dict = {}
         self.db = DB()
         self.crawl = Crawl()
@@ -19,17 +21,18 @@ class Monitor:
         result = self.db.query()
         print('----------加载数据----------')
         for id, item in result.items():
-            name, price, date = self.crawl.get(id)
-            self.goods_dict[id] = Goods(item['id'], item['want'], item['status'], name, price, date)
+            self.goods_dict[id] = Goods(item['id'], item['want'], item['status'])
             print(self.goods_dict[id].__dict__)
         print('----------加载完成----------')
 
     # 添加商品
     def add(self, id, want, status=True):
         if id not in self.goods_dict.keys():
-            name, price, date = self.crawl.get(id)
-            self.goods_dict[id] = Goods(id, want, status, name, price, date)
             self.db.add(id, want, status)
+            goods = Goods(id, want, status)
+            name, price, date = self.crawl.get(id)
+            goods.update(name, price, date)
+            self.goods_dict[id] = goods
             print(self.goods_dict[id].__dict__)
             return True
         else:
@@ -92,9 +95,14 @@ class Monitor:
         print('----------刷新完成----------')
 
     # 定时器
+    def _run(self):
+        self.scheduler.enter(self.rate, 0, self._run, ())  # delay, priority, action, argument=()
+        self.task()
+
+    # 定时器
     def run(self):
-        timer = threading.Timer(self.rate, self.task)  # delay function
-        timer.start()
+        self.scheduler.enter(0, 0, self._run, ())  # delay, priority, action, argument=()
+        self.scheduler.run()
 
 
 if __name__ == '__main__':
@@ -102,6 +110,4 @@ if __name__ == '__main__':
     wants = [219.00, 339.00, 4900.00, 5600.00, 8998.00]
 
     monitor = Monitor(rate=10)
-    for id, want in zip(ids, wants):
-        monitor.add(id, want)
     monitor.run()

@@ -2,10 +2,11 @@ from flask import Flask, render_template, request
 from monitor import Monitor
 from response import Response
 import time
+import threading
 
 app = Flask(__name__, static_url_path='')
 monitor = Monitor()
-monitor.run()  # 启动监控
+threading.Thread(target=monitor.run).start()  # 启动新线程监控
 
 
 @app.route('/', methods=['GET'])
