@@ -92,14 +92,8 @@ class Monitor:
         print('----------刷新完成----------')
 
     # 定时器
-    def _run(self):
-        self.task()
-        timer = threading.Timer(self.rate, self._run)  # delay function
-        timer.start()
-
-    # 定时器
     def run(self):
-        timer = threading.Timer(self.rate, self._run)  # delay function
+        timer = threading.Timer(self.rate, self.task)  # delay function
         timer.start()
 
 

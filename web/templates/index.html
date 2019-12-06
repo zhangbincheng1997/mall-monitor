@@ -11,7 +11,6 @@
     <script type="text/javascript" src="js/popper.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript" src="js/echarts.min.js"></script>
-    <script type="text/javascript" src="js/echarts.min.js"></script>
 </head>
 <body>
 
@@ -36,7 +35,7 @@
                 <label for="note">通知频率:</label>
                 <input type="text" class="form-control" id="note" value="3600" disabled>
                 <button type="button" class="btn btn-success" onclick="update_setting()">确定</button>
-                <button type="button" class="btn btn-danger" onclick="reset()">重置</button>
+                <button type="button" class="btn btn-danger" onclick="reset_setting()">重置</button>
             </form>
 
             <b>监控</b>
@@ -271,7 +270,6 @@
     }
 
     function update_setting() {
-        if ($('#email').attr('disabled')) return;
         let rate = $('#rate').val();
         let note = $('#note').val();
         if (rate === '' || note === '') {
@@ -280,9 +278,9 @@
         }
 
         $.ajax({
-            url: 'setting',
+            url: 'setting/update',
             type: 'POST',
-            data: {'rate': rate, 'note': note,},
+            data: {'rate': rate, 'note': note},
             dataType: 'json',
             success: function (result) {
                 if (result.code === 200) {
@@ -298,7 +296,7 @@
         });
     }
 
-    function reset() {
+    function reset_setting() {
         $('#rate').removeAttr('disabled');
         $('#note').removeAttr('disabled');
     }
@@ -381,14 +379,14 @@
             xAxis: {
                 type: 'category',
                 boundaryGap: false,
-                data: date //['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                data: date
             },
             yAxis: {
                 type: 'value'
             },
             series: [{
                 type: 'line',
-                data: price //[820, 932, 901, 934, 1290, 1330, 1320],
+                data: price
             }]
         };
 
